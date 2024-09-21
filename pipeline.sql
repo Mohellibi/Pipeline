@@ -1,3 +1,7 @@
+create database Ecole;
+Use Ecole;
+
+
 create table élèves (
     student_id int primary key,
     prenom varchar(50),
