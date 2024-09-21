@@ -1,39 +1,41 @@
-import os
 import json
-import datetime
-from memory_profiler import profile
+from datetime import datetime
 
-def load_sample(path):
+def load_sample(path) -> list[str]:
     with open(path, 'r') as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                yield line  
+        lines = file.readlines()
+    for line in lines:
+        if line == '\n':
+            lines.remove(line)
+    lines = [line.strip() for line in lines]
+    return lines
 
-def generate_json(data):
+def generate_json(data) -> list[dict]:
     transactions = {}
     for line in data:
         nom_emetteur, date, montant = line.split()
-        montant = float(montant.replace('€', ''))
+        montant = int(montant.replace('€', ''))
         if nom_emetteur in transactions:
             transactions[nom_emetteur] += montant
         else:
             transactions[nom_emetteur] = montant
 
-    yield from [{'name': name, 'total_sent': total} for name, total in transactions.items()]  
+    result = [{'name': name, 'total_sent': total} for name, total in transactions.items()]
+    print(result)
+    return result
+    
+def save_result(path, result):
+    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+    filename = f"result_sample{timestamp}.json"
+    with open(filename, 'w') as json_file:
+        json.dump(result, json_file, indent=4)
 
 """ résultat:
 [{'name': 'john', 'total_sent': 8000}]
 """
 
-
-def save_result(result):
-    timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
-    filename = f"result/result_sample_{timestamp}.json"
-    with open(filename, 'w') as json_file:
-        json.dump(list(result), json_file, indent=4)  
-
-
+"""
+ca ne fonctionne pas
 def process_files(source_dir, archived_dir):
     for filename in os.listdir(source_dir):
         if filename.endswith('.txt'):
@@ -45,3 +47,4 @@ def process_files(source_dir, archived_dir):
 
 if __name__ == "__main__":
     process_files('pipeline','archive.txt')
+"""
