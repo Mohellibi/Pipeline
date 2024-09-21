@@ -22,6 +22,11 @@ def generate_json(data):
 
     yield from [{'name': name, 'total_sent': total} for name, total in transactions.items()]  
 
+""" résultat:
+[{'name': 'john', 'total_sent': 8000}]
+"""
+
+
 def save_result(result):
     timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     filename = f"result/result_sample_{timestamp}.json"
